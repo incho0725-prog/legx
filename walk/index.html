@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>균형 체크: 걷고 돌기</title>
+<meta name="theme-color" content="#1F6F6B">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="걷고 돌기">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F3F4F1;--card:#FFFFFF;--ink:#17212B;--mut:#5B6672;--line:#D5D9D3;--acc:#1F6F6B;--accfg:#FFFFFF;--warn:#B4452B;--warnbg:#F7E4DE;--ok:#2F7A4B;--okbg:#E1F0E6;--na:#E8EAE6;color-scheme:light;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12181E;--card:#1A222A;--ink:#E8ECEF;--mut:#9AA6B1;--line:#2A343D;--acc:#5CB8B1;--accfg:#0E1A19;--warn:#E8896F;--warnbg:#3A2420;--ok:#6CC08B;--okbg:#1F3326;--na:#26303A;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#12181E;--card:#1A222A;--ink:#E8ECEF;--mut:#9AA6B1;--line:#2A343D;--acc:#5CB8B1;--accfg:#0E1A19;--warn:#E8896F;--warnbg:#3A2420;--ok:#6CC08B;--okbg:#1F3326;--na:#26303A;color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "Noto Sans KR",system-ui,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif}
+main{max-width:560px;margin:0 auto;padding:24px 20px 48px}
+h1{font-size:26px;line-height:1.3;margin:8px 0 6px;letter-spacing:-.02em}
+h2{font-size:18px;margin:28px 0 10px}
+p{margin:0 0 12px}
+.mut{color:var(--mut);font-size:14px}
+.view{display:none}.view.on{display:block}
+ol.how{padding-left:22px;margin:0 0 20px}ol.how li{margin-bottom:6px}
+button{font:inherit;cursor:pointer;border:0;border-radius:12px;padding:14px 20px;background:var(--acc);color:var(--accfg);font-weight:700;width:100%}
+button.ghost{background:transparent;color:var(--ink);border:1px solid var(--line);font-weight:500}
+button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
+.row{display:flex;gap:10px;margin-top:10px}
+.note{border-left:3px solid var(--line);padding:2px 0 2px 12px;color:var(--mut);font-size:14px;margin:18px 0}
+#err{color:var(--warn);font-weight:500;margin-top:12px}
+.cam{position:relative;width:200px;height:150px;margin:16px auto 12px;border-radius:14px;overflow:hidden;border:2px solid var(--ink);background:var(--card)}
+#pv{width:100%;height:100%;object-fit:cover;display:block}
+#bub{position:absolute;left:50%;top:50%;width:22px;height:22px;margin:-11px;border-radius:50%;border:3px solid var(--acc);transition:transform .08s linear}
+#phase{text-align:center;font-size:22px;font-weight:700;margin:0}
+#count{text-align:center;font-size:56px;font-weight:700;line-height:1.1;margin:4px 0 8px;font-variant-numeric:tabular-nums}
+#sub{text-align:center;color:var(--mut);margin-bottom:18px}
+.score{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin:14px 0}
+.score b{font-size:40px;line-height:1}
+.clue{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:8px;display:flex;gap:12px;align-items:flex-start;justify-content:space-between}
+.clue.hit{border-color:var(--warn);background:var(--warnbg)}
+.clue .t{font-weight:700;font-size:15px;line-height:1.45}.clue .s{color:var(--mut);font-size:13px}
+.chip{flex:none;font-size:13px;font-weight:700;padding:3px 10px;border-radius:99px;background:var(--na);color:var(--mut);white-space:nowrap}
+.chip.hit{background:var(--warn);color:var(--card)}.chip.ok{background:var(--okbg);color:var(--ok)}
+.tog{display:flex;gap:6px;margin-top:8px}.tog button{padding:6px 12px;font-size:13px;width:auto;border-radius:99px}
+.tog button.sel{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.met{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:14px}
+.met div{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:8px 12px}.met span{display:block;color:var(--mut);font-size:12px}
+</style></head><body><main>
+
+<section id="v-start" class="view on">
+<h1>균형 체크: 걷고 돌기</h1>
+<p class="mut">음주 후 균형감각이 얼마나 흔들리는지 카메라 영상으로 확인합니다. 음주 여부를 판정하는 도구가 아닙니다. 영상은 폰 안에서만 분석되며 저장하거나 전송하지 않습니다.</p>
+<h2>진행 방법</h2>
+<ol class="how">
+<li>폰의 뒷면 카메라가 정면을 향하도록 가슴 앞에 고정하세요. 목걸이형 거치대나 셔츠 주머니가 좋습니다.</li>
+<li>벽, 바닥에 무늬가 있고 밝은 곳에서 하세요. 하얀 벽만 보이면 측정이 부정확합니다.</li>
+<li>한 발 뒤꿈치를 다른 발 앞에 붙이고 선 채 15초 동안 안내를 듣습니다.</li>
+<li>시작 신호가 울리면 일직선 위를 발뒤꿈치와 발끝을 붙여 9걸음 걷습니다.</li>
+<li>한 발을 축으로 돌아서 다시 9걸음 돌아옵니다. 마치면 잠시 멈춰 서세요.</li>
+</ol>
+<button id="go">카메라 켜고 측정 시작</button>
+<div class="row"><button class="ghost" id="demo">샘플 결과 먼저 보기</button></div>
+<p id="err" role="alert"></p>
+<p class="note">안전한 평지에서, 넘어져도 다치지 않는 곳에서 하세요. 술을 마신 뒤에는 이 결과와 관계없이 운전하지 마세요.</p>
+</section>
+
+<section id="v-run" class="view">
+<div class="cam"><video id="pv" muted playsinline></video><div id="bub"></div></div>
+<p id="phase">준비</p><p id="count">5</p><p id="sub">폰을 고정하고 자세를 잡아 주세요</p>
+<button class="ghost" id="end">지금 종료하고 분석</button>
+</section>
+
+<section id="v-res" class="view">
+<h1>측정 결과</h1>
+<div class="score" id="score"></div>
+<h2>항목별 분석</h2><div id="list"></div>
+<h2>측정값</h2><div class="met" id="met"></div>
+<p class="note">발 간격과 팔 높이는 가슴 카메라로 보이지 않아 직접 표시하는 항목입니다. 기준값은 초기 설정이라, 맨정신일 때 한 번 측정해 두고 비교하면 가장 정확합니다.</p>
+<button id="again">다시 측정</button>
+</section>
+</main>
+<script>
+const CL=[["지시를 듣는 동안 균형을 유지하지 못함","자세를 못 잡고 흔들림"],["지시가 끝나기 전에 미리 출발함",""],["걷는 도중 중간에 멈춤",""],["발뒤꿈치와 발끝이 0.5인치(약 1.25cm) 이상 떨어짐","Heel-to-toe를 지키지 못함"],["일직선에서 벗어남","Stepping off the line"],["균형을 잡기 위해 팔을 벌림","6인치 이상 높이로 팔을 올림"],["부적절한 회전 동작","지정된 방식이 아닌 다른 방법으로 돎"],["걸음 수가 틀림","9걸음보다 적거나 많이 걸음"]];
+const MAN=[3,5];
+const $=id=>document.getElementById(id);
+const W=128,H=96,K=65/W,SR=14,SM=14,ST=3;
+let rows=[],phase="idle",tStart=0,tCue=0,timers=[],res=null,man={},stream=null,prev=null,pt=0,posX=0,posY=0,base=[0,0],lowTex=0,nFr=0;
+const vid=$("pv"),cv=document.createElement("canvas");cv.width=W;cv.height=H;
+const ctx=cv.getContext("2d",{willReadFrequently:true});
+function show(v){document.querySelectorAll(".view").forEach(e=>e.classList.toggle("on",e.id==="v-"+v));scrollTo(0,0)}
+function say(t){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang="ko-KR";speechSynthesis.speak(u)}catch(e){}}
+function beep(){try{const c=new (window.AudioContext||window.webkitAudioContext)(),o=c.createOscillator();o.frequency.value=880;o.connect(c.destination);o.start();o.stop(c.currentTime+.4)}catch(e){}try{navigator.vibrate&&navigator.vibrate(300)}catch(e){}}
+function sub(m,c,p){const d=m-2*c+p;return d>1e-6?(m-p)/(2*d):0}
+function frame(){
+ if(!vid.videoWidth)return;
+ ctx.drawImage(vid,0,0,W,H);const d=ctx.getImageData(0,0,W,H).data;
+ const g=new Uint8Array(W*H);for(let i=0;i<W*H;i++)g[i]=(d[i*4]*77+d[i*4+1]*150+d[i*4+2]*29)>>8;
+ const t=performance.now();nFr++;
+ if(prev){
+  const dt=Math.max((t-pt)/1000,.02),N=2*SR+1,S=new Float32Array(N*N);let best=1e18,bi=0;
+  for(let sy=-SR;sy<=SR;sy++)for(let sx=-SR;sx<=SR;sx++){let a=0;
+   for(let y=SM;y<H-SM;y+=ST){const o=y*W,o2=(y+sy)*W+sx;for(let x=SM;x<W-SM;x+=ST)a+=Math.abs(g[o+x]-prev[o2+x])}
+   const i=(sy+SR)*N+sx+SR;S[i]=a;if(a<best){best=a;bi=i}}
+  const bx=bi%N,by=(bi/N)|0;let ox=0,oy=0;
+  if(bx>0&&bx<N-1)ox=sub(S[bi-1],S[bi],S[bi+1]);
+  if(by>0&&by<N-1)oy=sub(S[bi-N],S[bi],S[bi+N]);
+  const dx=-(bx-SR+ox),dy=-(by-SR+oy);
+  let tx=0,c=0;for(let y=SM;y<H-SM;y+=ST)for(let x=SM;x<W-SM-ST;x+=ST){tx+=Math.abs(g[y*W+x+ST]-g[y*W+x]);c++}
+  if(tx/c<2.5)lowTex++;
+  posX+=dx;posY+=dy;
+  base[0]+=.03*(posX-base[0]);base[1]+=.03*(posY-base[1]);
+  const bx2=Math.max(-70,Math.min(70,(posX-base[0])*3)),by2=Math.max(-50,Math.min(50,(posY-base[1])*3));
+  $("bub").style.transform=`translate(${bx2}px,${by2}px)`;
+  if(phase==="instr"||phase==="walk")rows.push([t,dx*K/dt,posY,Math.hypot(dx,dy)*K/dt,posX*K]);
+ }
+ prev=g;pt=t;
+}
+function hp(a,al){let m=a[0];return a.map(v=>{m+=al*(v-m);return v-m})}
+function stepTimes(){
+ if(rows.length<20)return[];
+ const py=hp(rows.map(r=>r[2]),.08);let s=0;const sm=py.map(v=>(s+=.5*(v-s)));
+ let q=0;for(const v of sm)q+=v*v;const thr=Math.max(.45,.6*Math.sqrt(q/sm.length));
+ const st=[];let last=-1e9;
+ for(let i=1;i<sm.length-1;i++)if(sm[i]>thr&&sm[i]>sm[i-1]&&sm[i]>=sm[i+1]&&rows[i][0]-last>330){st.push(rows[i][0]);last=rows[i][0]}
+ return st;
+}
+function clear(){timers.forEach(t=>{clearInterval(t);clearTimeout(t)});timers=[];try{stream&&stream.getTracks().forEach(t=>t.stop())}catch(e){}stream=null;try{speechSynthesis.cancel()}catch(e){}}
+async function begin(){
+ $("err").textContent="";
+ try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment",width:{ideal:640},height:{ideal:480}},audio:false})}
+ catch(e){$("err").textContent="카메라 권한이 필요합니다. 카카오톡 같은 앱 안의 브라우저라면 Safari나 Chrome에서 열고, 브라우저 설정에서 카메라를 허용해 주세요.";return}
+ vid.srcObject=stream;try{await vid.play()}catch(e){}
+ rows=[];prev=null;posX=posY=0;base=[0,0];lowTex=0;nFr=0;phase="ready";res=null;man={};
+ show("run");$("phase").textContent="준비";$("sub").textContent="카메라가 정면을 보게 고정하고 발을 일직선으로 붙여 서세요";
+ let n=5;$("count").textContent=n;
+ timers.push(setInterval(frame,60));
+ const iv=setInterval(()=>{
+  n--;$("count").textContent=Math.max(n,0);
+  if(phase==="ready"&&n===0){
+   if(nFr<5){abort("카메라 영상이 들어오지 않습니다. 다른 앱이 카메라를 쓰고 있지 않은지 확인해 주세요.");return}
+   phase="instr";tStart=performance.now();n=15;$("count").textContent=n;$("phase").textContent="안내 듣는 중";$("sub").textContent="자세를 유지하세요. 신호 전에는 움직이지 마세요";
+   say("발뒤꿈치와 발끝을 붙이고 서서 팔은 몸 옆에 두세요. 제가 시작하라고 할 때까지 그 자세를 유지하세요.");
+  }else if(phase==="instr"&&n===0){
+   phase="walk";tCue=performance.now();beep();say("시작");
+   $("phase").textContent="걷기";$("count").textContent="";$("sub").textContent="9걸음 걷고, 돌아서, 9걸음 돌아오세요";
+   timers.push(setInterval(autoEnd,500),setTimeout(finish,75000));
+  }
+ },1000);
+ timers.push(iv);
+}
+function autoEnd(){
+ const st=stepTimes(),now=performance.now(),w=st.filter(t=>t>tCue-3000);
+ if(w.length>=12&&now-w[w.length-1]>3000)finish();
+}
+function abort(m){clear();phase="idle";show("start");$("err").textContent=m}
+function finish(){
+ if(phase!=="walk")return;
+ const warn=nFr>0&&lowTex/nFr>.5;
+ clear();phase="done";
+ if(rows.length<100){abort("측정 데이터가 부족합니다. 다시 시도해 주세요.");return}
+ res=analyze();res.warn=warn;render();show("res");
+}
+function analyze(){
+ const R0=rows,st=stepTimes(),t0=tStart,tc=tCue;
+ const inst=R0.filter(r=>r[0]>t0+2000&&r[0]<tc),k=inst.length||1;
+ const bias=inst.reduce((s,r)=>s+r[1],0)/k;
+ const rms=Math.sqrt(inst.reduce((s,r)=>s+r[3]*r[3],0)/k);
+ const mx=inst.reduce((s,r)=>s+r[4],0)/k,my=inst.reduce((s,r)=>s+r[2],0)/k;
+ let exc=0;for(const r of inst)exc=Math.max(exc,Math.hypot(r[4]-mx,(r[2]-my)*K));
+ const c=Array(8).fill(null),d=Array(8).fill("");
+ c[0]=rms>8||exc>4;d[0]=`화면 흔들림 ${rms.toFixed(1)}°/s, 최대 이동 ${exc.toFixed(1)}°`;
+ const early=st.filter(t=>t>t0+2500&&t<tc-300);
+ c[1]=early.length>=2;d[1]=c[1]?`신호 전 ${early.length}걸음 감지`:"신호 후 출발";
+ const ws=c[1]?st.filter(t=>t>t0+2500):st.filter(t=>t>=tc);
+ const W2=R0.filter(r=>r[0]>=(ws[0]||tc)-300);
+ let ys=0;const Y=W2.map(r=>{ys+=.3*((r[1]-bias)-ys);return[r[0],ys]});
+ const seg=[];let cur=null;
+ for(let i=1;i<Y.length;i++){const dt=(Y[i][0]-Y[i-1][0])/1000;
+  if(Math.abs(Y[i][1])>30){if(!cur)cur={a:Y[i][0],b:0,ang:0,la:0};cur.b=Y[i][0];cur.la=Y[i][0];cur.ang+=Y[i][1]*dt}
+  else if(cur&&Y[i][0]-cur.la>500){seg.push(cur);cur=null}}
+ if(cur)seg.push(cur);
+ const ev=[];for(const s of seg.filter(s=>Math.abs(s.ang)>15)){const l=ev[ev.length-1];if(l&&s.a-l.b<1500){l.b=s.b;l.ang+=s.ang;l.n++}else ev.push({a:s.a,b:s.b,ang:s.ang,n:1})}
+ ev.sort((x,y)=>Math.abs(y.ang)-Math.abs(x.ang));
+ const T=ev[0]&&Math.abs(ev[0].ang)>=100?ev[0]:null;
+ const A=T?ws.filter(t=>t<T.a):ws,B=T?ws.filter(t=>t>T.b):[];
+ if(ws.length>=3){
+  let stop=0;for(let i=1;i<ws.length;i++){const g=ws[i]-ws[i-1];if(g>1600&&!(T&&ws[i]>T.a-800&&ws[i-1]<T.b+800))stop++}
+  c[2]=stop>0;d[2]=stop?`멈춤 ${stop}회 감지`:"멈춤 없음";
+ }else d[2]="걸음이 충분히 감지되지 않음";
+ const dev=(a,b)=>{let h=0,h0=null,mxx=0;for(let i=1;i<Y.length;i++){if(Y[i][0]<a||Y[i][0]>b)continue;h+=Y[i][1]*(Y[i][0]-Y[i-1][0])/1000;if(h0===null)h0=h;mxx=Math.max(mxx,Math.abs(h-h0))}return mxx};
+ const dA=A.length>2?dev(A[0],T?T.a:A[A.length-1]):0,dB=B.length>2?dev(T.b,B[B.length-1]):0,dm=Math.max(dA,dB);
+ const hx=hp(R0.map(r=>r[4]),.08),L=[];
+ R0.forEach((r,i)=>{if(ws.length>=4&&r[0]>=ws[0]&&r[0]<=ws[ws.length-1]&&!(T&&r[0]>T.a-300&&r[0]<T.b+300))L.push(hx[i])});
+ const lat=L.length>20?Math.sqrt(L.reduce((s,v)=>s+v*v,0)/L.length):0;
+ if(ws.length>=4){c[4]=dm>15||lat>2.5;d[4]=`방향 이탈 약 ${dm.toFixed(0)}°, 좌우 흔들림 ${lat.toFixed(1)}°`}else d[4]="걸음이 충분히 감지되지 않음";
+ if(T){c[6]=T.n>=4||(T.b-T.a)>4000||Math.abs(Math.abs(T.ang)-180)>45;d[6]=`회전 ${Math.abs(T.ang).toFixed(0)}°, ${((T.b-T.a)/1000).toFixed(1)}초, ${T.n}회 나눠 돎`;
+  c[7]=Math.abs(A.length-9)>=2||Math.abs(B.length-9)>=2;d[7]=`갈 때 ${A.length}걸음, 올 때 ${B.length}걸음 (오차 ±1 허용)`}
+ else{d[6]=d[7]="회전이 감지되지 않아 판단 불가"}
+ return{c,d,m:{rms,exc,lat,A:A.length,B:B.length,dm,turn:T?`${Math.abs(T.ang).toFixed(0)}°`:"-"}};
+}
+function render(){
+ const hits=res.c.filter(Boolean).length+MAN.filter(i=>man[i]===true).length;
+ const pend=MAN.filter(i=>man[i]==null).length;
+ const lv=hits<=1?"균형이 안정적입니다":hits<=3?"균형이 다소 흔들립니다":"균형이 많이 무너졌습니다";
+ $("score").innerHTML=`<b>${hits}</b> / 8 항목 해당<div style="font-weight:700;margin-top:6px">${lv}</div>${pend?`<div class="mut">직접 확인 항목 ${pend}개는 아직 반영되지 않았어요</div>`:""}${res.warn?`<div class="mut">화면에 무늬가 부족해 정확도가 낮을 수 있어요</div>`:""}${res.sample?`<div class="mut">샘플 데이터입니다</div>`:""}`;
+ $("list").innerHTML=CL.map((x,i)=>{
+  const isM=MAN.includes(i),v=isM?man[i]:res.c[i];
+  const cls=v===true?"hit":"",chip=isM?(v==null?'<span class="chip">직접 확인</span>':v?'<span class="chip hit">해당</span>':'<span class="chip ok">해당 없음</span>'):(v==null?'<span class="chip">판단 불가</span>':v?'<span class="chip hit">해당</span>':'<span class="chip ok">해당 없음</span>');
+  const tog=isM?`<div class="tog"><button class="ghost ${v===true?"sel":""}" data-m="${i}" data-v="1">해당</button><button class="ghost ${v===false?"sel":""}" data-m="${i}" data-v="0">해당 없음</button></div>`:"";
+  return`<div class="clue ${cls}"><div><div class="t">${x[0]}</div>${x[1]?`<div class="s">${x[1]}</div>`:""}<div class="s">${isM?"가슴 카메라로는 보이지 않아요. 옆 사람의 관찰이나 별도 영상으로 표시하세요.":res.d[i]}</div>${tog}</div>${chip}</div>`}).join("");
+ const m=res.m;
+ $("met").innerHTML=[["안내 중 화면 흔들림",m.rms.toFixed(1)+"°/s"],["안내 중 최대 이동",m.exc.toFixed(1)+"°"],["걸음 수(갈 때/올 때)",m.A+" / "+m.B],["회전 각도",m.turn],["진행 방향 이탈",m.dm.toFixed(0)+"°"],["걷는 중 좌우 흔들림",m.lat.toFixed(1)+"°"]].map(x=>`<div><span>${x[0]}</span>${x[1]}</div>`).join("");
+}
+$("list").addEventListener("click",e=>{const b=e.target.closest("[data-m]");if(!b)return;man[b.dataset.m]=b.dataset.v==="1";render()});
+$("go").onclick=begin;$("end").onclick=()=>{if(phase==="walk")finish();else abort("")};
+$("again").onclick=()=>show("start");
+$("demo").onclick=()=>{man={};res={sample:true,c:[true,false,true,null,true,null,true,false],d:["화면 흔들림 11.2°/s, 최대 이동 5.1°","신호 후 출발","멈춤 1회 감지","","방향 이탈 약 24°, 좌우 흔들림 3.4°","","회전 210°, 4.6초, 5회 나눠 돎","갈 때 9걸음, 올 때 10걸음 (오차 ±1 허용)"],m:{rms:11.2,exc:5.1,lat:3.4,A:9,B:10,dm:24,turn:"210°"}};render();show("res")};
+if("serviceWorker" in navigator&&location.protocol!=="file:")navigator.serviceWorker.register("sw.js").catch(()=>{});
+</script></body></html>
