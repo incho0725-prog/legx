@@ -1,5 +1,5 @@
 // Caches the page so it opens offline after the first visit; the page itself is updated from the network when online.
-const CACHE = "walk-v1";
+const CACHE = "walk-v2";
 const SHELL = ["./", "index.html", "manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png"];
 self.addEventListener("install", e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL))); self.skipWaiting(); });
 self.addEventListener("activate", e => {

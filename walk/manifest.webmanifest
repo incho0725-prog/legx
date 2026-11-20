@@ -1,7 +1,7 @@
 {
   "name": "균형 체크: 걷고 돌기",
   "short_name": "걷고 돌기",
-  "description": "가슴에 고정한 폰 카메라로 걷고 돌기 검사 중 몸의 흔들림을 재요.",
+  "description": "관찰자가 폰으로 측정자를 찍어 걷고 돌기 검사의 실수 항목을 분석해요.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

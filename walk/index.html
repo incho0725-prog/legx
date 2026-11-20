@@ -24,21 +24,24 @@ h2{font-size:18px;margin:28px 0 10px}
 p{margin:0 0 12px}
 .mut{color:var(--mut);font-size:14px}
 .view{display:none}.view.on{display:block}
-ol.how{padding-left:22px;margin:0 0 20px}ol.how li{margin-bottom:6px}
+ol.how,ul.how{padding-left:22px;margin:0 0 20px}ol.how li,ul.how li{margin-bottom:6px}
 button{font:inherit;cursor:pointer;border:0;border-radius:12px;padding:14px 20px;background:var(--acc);color:var(--accfg);font-weight:700;width:100%}
 button.ghost{background:transparent;color:var(--ink);border:1px solid var(--line);font-weight:500}
 button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 .row{display:flex;gap:10px;margin-top:10px}
+input[type=number]{font:inherit;width:64px;padding:4px 8px;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink)}
 .note{border-left:3px solid var(--line);padding:2px 0 2px 12px;color:var(--mut);font-size:14px;margin:18px 0}
 #err{color:var(--warn);font-weight:500;margin-top:12px}
-.cam{position:relative;width:200px;height:150px;margin:16px auto 12px;border-radius:14px;overflow:hidden;border:2px solid var(--ink);background:var(--card)}
-#pv{width:100%;height:100%;object-fit:cover;display:block}
-#bub{position:absolute;left:50%;top:50%;width:22px;height:22px;margin:-11px;border-radius:50%;border:3px solid var(--acc);transition:transform .08s linear}
+.fig svg{width:100%;height:auto;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:12px;margin:6px 0 10px}
+.cam{position:relative;width:100%;max-width:520px;aspect-ratio:4/3;margin:12px auto;border-radius:14px;overflow:hidden;border:2px solid var(--ink);background:#000}
+#pv{width:100%;height:100%;object-fit:contain;display:block}
+#det{text-align:center;font-size:14px;color:var(--mut);margin:0 0 6px}
 #phase{text-align:center;font-size:22px;font-weight:700;margin:0}
 #count{text-align:center;font-size:56px;font-weight:700;line-height:1.1;margin:4px 0 8px;font-variant-numeric:tabular-nums}
 #sub{text-align:center;color:var(--mut);margin-bottom:18px}
 .score{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin:14px 0}
 .score b{font-size:40px;line-height:1}
+canvas#basecv{width:100%;max-width:360px;display:block;border-radius:10px;border:1px solid var(--line)}
 .clue{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-bottom:8px;display:flex;gap:12px;align-items:flex-start;justify-content:space-between}
 .clue.hit{border-color:var(--warn);background:var(--warnbg)}
 .clue .t{font-weight:700;font-size:15px;line-height:1.45}.clue .s{color:var(--mut);font-size:13px}
@@ -52,171 +55,247 @@ button:focus-visible{outline:3px solid var(--ink);outline-offset:2px}
 
 <section id="v-start" class="view on">
 <h1>균형 체크: 걷고 돌기</h1>
-<p class="mut">음주 후 균형감각이 얼마나 흔들리는지 카메라 영상으로 확인합니다. 음주 여부를 판정하는 도구가 아닙니다. 영상은 폰 안에서만 분석되며 저장하거나 전송하지 않습니다.</p>
-<h2>진행 방법</h2>
+<p class="mut">관찰자가 측정자를 촬영합니다. 앱이 측정 전 서 있는 기본 자세를 인식하고, 그 자세에서 얼마나 틀어지는지를 분석해 해당 항목을 알려줍니다. 음주 여부를 판정하는 도구가 아닙니다. 영상은 폰 안에서만 분석되며 저장하거나 전송하지 않습니다.</p>
+<h2>촬영 준비</h2>
 <ol class="how">
-<li>폰의 뒷면 카메라가 정면을 향하도록 가슴 앞에 고정하세요. 목걸이형 거치대나 셔츠 주머니가 좋습니다.</li>
-<li>벽, 바닥에 무늬가 있고 밝은 곳에서 하세요. 하얀 벽만 보이면 측정이 부정확합니다.</li>
-<li>한 발 뒤꿈치를 다른 발 앞에 붙이고 선 채 15초 동안 안내를 듣습니다.</li>
-<li>시작 신호가 울리면 일직선 위를 발뒤꿈치와 발끝을 붙여 9걸음 걷습니다.</li>
-<li>한 발을 축으로 돌아서 다시 9걸음 돌아옵니다. 마치면 잠시 멈춰 서세요.</li>
+<li>바닥에 약 2.5m 길이의 일직선(테이프 등)을 만듭니다.</li>
+<li>선의 한쪽 끝 연장선 위, 선 끝에서 3.5m 이상 떨어진 곳에 폰을 세워 고정합니다. 측정자는 먼 쪽 끝에서 출발해 카메라 쪽으로 걸어옵니다.</li>
+<li>걷는 내내 전신(머리부터 발끝)이 화면에 들어와야 합니다. 폰은 흔들리면 안 됩니다.</li>
+<li>배경이 단순하고 밝으며, 측정자의 옷 색이 배경과 달라야 정확합니다.</li>
 </ol>
-<button id="go">카메라 켜고 측정 시작</button>
+<div class="fig"><svg viewBox="0 0 400 210" role="img" aria-label="위에서 본 촬영 배치: 먼 쪽 시작점에서 카메라 쪽으로 걷는 일직선과 카메라 위치">
+<g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M200 30V120" stroke-dasharray="6 5"/><path d="M175 52V102M170 94L175 102L180 94"/><path d="M200 168L140 14M200 168L260 14" stroke-width="1" opacity=".5"/><rect x="188" y="168" width="24" height="16" rx="3"/></g>
+<circle cx="200" cy="30" r="6" style="fill:var(--acc)"/><circle cx="200" cy="120" r="4" style="fill:currentColor"/>
+<g fill="currentColor" font-size="12" font-family="inherit"><text x="212" y="34">시작점(먼 쪽)</text><text x="212" y="124">선 끝</text><text x="212" y="80">일직선 약 2.5m</text><text x="168" y="80" text-anchor="end">카메라 쪽으로</text><text x="222" y="182">카메라 (선 끝에서 3.5m 이상)</text></g></svg></div>
+<h2>진행 순서</h2>
+<ol class="how">
+<li>처음 3초: 측정자는 화면 밖에 있습니다. 앱이 빈 배경을 기억합니다.</li>
+<li>측정자가 들어와 시작점에 서서 기본 자세를 잡습니다. 앱이 이 자세를 기준으로 삼습니다.</li>
+<li>시작 신호 후 발뒤꿈치와 발끝을 붙여 9걸음 걸어 카메라 쪽으로 오고, 돌아서서 9걸음 되돌아갑니다.</li>
+<li>다 끝나면 멈춰 서세요. 자동으로 분석합니다.</li>
+</ol>
+<button id="go">촬영하며 측정 시작</button>
 <div class="row"><button class="ghost" id="demo">샘플 결과 먼저 보기</button></div>
 <p id="err" role="alert"></p>
+
+<h2>카메라가 안 켜질 때: 영상으로 분석</h2>
+<ol class="how"><li>폰 기본 카메라 앱으로 위 배치대로 영상을 녹화합니다. 녹화 시작 후 처음 3초는 측정자가 화면 밖에 있어야 합니다.</li><li>그 영상을 여기에 올리면 같은 방식으로 분석합니다. 영상은 폰 안에서만 처리됩니다.</li></ol>
+<h2>관찰자 안내 (15초)</h2>
+<p class="mut">녹화 시작 3초 뒤 측정자가 들어와 시작점에 서고, 5초쯤부터 관찰자가 아래 내용을 소리 내어 읽어 주세요. 읽는 동안 측정자는 아래 그림의 자세를 유지합니다. 20초가 되면 관찰자가 “시작하세요”라고 말합니다. 아래 안내 소리 버튼을 써도 됩니다.</p>
+<ol class="how">
+<li>발뒤꿈치와 발끝을 붙이고 일직선 위에 서세요.</li>
+<li>팔은 몸 옆에 내리고, 시작하라고 할 때까지 이 자세를 유지하세요.</li>
+<li>시작하면 발뒤꿈치와 발끝을 붙여 9걸음 걸으세요. 걸음 수를 소리 내어 세어도 좋습니다.</li>
+<li>9걸음 뒤에 앞발을 고정하고, 다른 발로 작은 걸음을 내디뎌 돌아서세요.</li>
+<li>돌아서서 다시 9걸음 걸어 돌아가세요. 이해되셨죠? 시작하세요.</li>
+</ol>
+<h2>안내를 듣는 동안의 자세</h2>
+<div id="pose1" class="fig"></div>
+<ul class="how">
+<li>발뒤꿈치와 발끝이 닿게 일직선으로 섭니다.</li>
+<li>팔은 몸 옆에 내리고, 몸을 곧게 세워 시선은 정면을 봅니다.</li>
+<li>시작 신호 전에는 발을 떼거나 움직이지 않습니다.</li>
+</ul>
+<p class="note">관찰자는 걷는 동안 발뒤꿈치와 발끝이 0.5인치(약 1.25cm) 이상 떨어지는지를 직접 봐 주세요. 영상으로는 알 수 없는 항목이라 결과 화면의 4번 항목에 직접 표시하면 됩니다.</p>
+<p class="mut">시작 신호 시점 <input type="number" id="cue" value="20" min="8" max="60"> 초 (녹화 시작 후)</p>
+<div class="row"><button id="rec">영상 녹화해서 분석</button></div>
+<div class="row"><button class="ghost" id="pick">찍어 둔 영상 선택</button></div>
+<div class="row"><button class="ghost" id="guide">안내 소리 재생 (20초)</button></div>
+<p class="mut">안내 소리 버튼은 다른 폰이나 조원이 눌러, 녹화와 동시에 시작하세요. 입장 안내, 자세 안내, 시작 신호음이 차례로 나옵니다.</p>
+<input type="file" id="f1" accept="video/*" capture="environment" hidden><input type="file" id="f2" accept="video/*" hidden>
 <p class="note">안전한 평지에서, 넘어져도 다치지 않는 곳에서 하세요. 술을 마신 뒤에는 이 결과와 관계없이 운전하지 마세요.</p>
 </section>
 
 <section id="v-run" class="view">
-<div class="cam"><video id="pv" muted playsinline></video><div id="bub"></div></div>
-<p id="phase">준비</p><p id="count">5</p><p id="sub">폰을 고정하고 자세를 잡아 주세요</p>
+<div class="cam"><video id="pv" muted playsinline></video></div>
+<p id="det"></p>
+<p id="phase">준비</p><p id="count">5</p><p id="sub">폰을 고정하고 측정자는 화면 밖으로 나가 주세요</p>
+<div id="pose2" class="fig" hidden></div>
 <button class="ghost" id="end">지금 종료하고 분석</button>
 </section>
 
 <section id="v-res" class="view">
 <h1>측정 결과</h1>
 <div class="score" id="score"></div>
+<div id="basewrap"><h2>인식한 기본 자세</h2><canvas id="basecv"></canvas><p class="mut" style="margin-top:8px">초록색으로 칠한 부분이 측정 전 서 있는 자세로 인식한 몸입니다. 모든 판정은 이 자세를 기준으로 합니다.</p></div>
 <h2>항목별 분석</h2><div id="list"></div>
 <h2>측정값</h2><div class="met" id="met"></div>
-<p class="note">발 간격과 팔 높이는 가슴 카메라로 보이지 않아 직접 표시하는 항목입니다. 기준값은 초기 설정이라, 맨정신일 때 한 번 측정해 두고 비교하면 가장 정확합니다.</p>
+<p class="note">기준값은 초기 설정이라 실제와 다를 수 있습니다. 맨정신일 때 같은 방법으로 한 번 측정해 두고 비교하면 가장 정확합니다.</p>
 <button id="again">다시 측정</button>
 </section>
 </main>
 <script>
 const CL=[["지시를 듣는 동안 균형을 유지하지 못함","자세를 못 잡고 흔들림"],["지시가 끝나기 전에 미리 출발함",""],["걷는 도중 중간에 멈춤",""],["발뒤꿈치와 발끝이 0.5인치(약 1.25cm) 이상 떨어짐","Heel-to-toe를 지키지 못함"],["일직선에서 벗어남","Stepping off the line"],["균형을 잡기 위해 팔을 벌림","6인치 이상 높이로 팔을 올림"],["부적절한 회전 동작","지정된 방식이 아닌 다른 방법으로 돎"],["걸음 수가 틀림","9걸음보다 적거나 많이 걸음"]];
-const MAN=[3,5];
+const MAN=[3];
 const $=id=>document.getElementById(id);
-const W=128,H=96,K=65/W,SR=14,SM=14,ST=3;
-let rows=[],phase="idle",tStart=0,tCue=0,timers=[],res=null,man={},stream=null,prev=null,pt=0,posX=0,posY=0,base=[0,0],lowTex=0,nFr=0;
-const vid=$("pv"),cv=document.createElement("canvas");cv.width=W;cv.height=H;
+const H=180;let W=240;
+let rows=[],phase="idle",T0=0,TR=0,tCue=20000,timers=[],res=null,man={},stream=null,bg=null,bgSum=null,bgN=0,g0=null,gl=null,thr=25,bgReady=false,snap=null,snapDone=false,nClip=0,nOk=0;
+const vid=$("pv"),cv=document.createElement("canvas");cv.height=H;
 const ctx=cv.getContext("2d",{willReadFrequently:true});
+const POSE=`<svg viewBox="0 0 400 190" role="img" aria-label="발뒤꿈치와 발끝을 붙이고 팔을 내린 자세, 옆모습과 위에서 본 발"><g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><circle cx="90" cy="34" r="14"/><path d="M90 48V108"/><path d="M90 56L87 100"/><path d="M90 108L98 160M90 108L82 160"/><path d="M20 164H170" stroke-width="1.5" stroke-dasharray="5 4"/><path d="M96 162H120M72 162H96" stroke-width="6" style="stroke:var(--acc)"/><path d="M215 100H392" stroke-width="1.5" stroke-dasharray="5 4"/><rect x="270" y="92" width="40" height="16" rx="8" style="fill:var(--acc);stroke:none;opacity:.55"/><rect x="310" y="92" width="40" height="16" rx="8" style="fill:var(--acc);stroke:none"/></g><g fill="currentColor" font-size="12" font-family="inherit"><text x="110" y="96">팔은 내림</text><text x="60" y="184">옆모습</text><text x="290" y="72" text-anchor="middle">발뒤꿈치-발끝 붙임</text><text x="392" y="130" text-anchor="end">걷는 방향 →</text><text x="310" y="184" text-anchor="middle">위에서 본 발</text></g></svg>`;
+$("pose1").innerHTML=POSE;$("pose2").innerHTML=POSE;
 function show(v){document.querySelectorAll(".view").forEach(e=>e.classList.toggle("on",e.id==="v-"+v));scrollTo(0,0)}
+let AC=null,BP=null;
 function say(t){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang="ko-KR";speechSynthesis.speak(u)}catch(e){}}
-function beep(){try{const c=new (window.AudioContext||window.webkitAudioContext)(),o=c.createOscillator();o.frequency.value=880;o.connect(c.destination);o.start();o.stop(c.currentTime+.4)}catch(e){}try{navigator.vibrate&&navigator.vibrate(300)}catch(e){}}
-function sub(m,c,p){const d=m-2*c+p;return d>1e-6?(m-p)/(2*d):0}
-function frame(){
- if(!vid.videoWidth)return;
- ctx.drawImage(vid,0,0,W,H);const d=ctx.getImageData(0,0,W,H).data;
- const g=new Uint8Array(W*H);for(let i=0;i<W*H;i++)g[i]=(d[i*4]*77+d[i*4+1]*150+d[i*4+2]*29)>>8;
- const t=performance.now();nFr++;
- if(prev){
-  const dt=Math.max((t-pt)/1000,.02),N=2*SR+1,S=new Float32Array(N*N);let best=1e18,bi=0;
-  for(let sy=-SR;sy<=SR;sy++)for(let sx=-SR;sx<=SR;sx++){let a=0;
-   for(let y=SM;y<H-SM;y+=ST){const o=y*W,o2=(y+sy)*W+sx;for(let x=SM;x<W-SM;x+=ST)a+=Math.abs(g[o+x]-prev[o2+x])}
-   const i=(sy+SR)*N+sx+SR;S[i]=a;if(a<best){best=a;bi=i}}
-  const bx=bi%N,by=(bi/N)|0;let ox=0,oy=0;
-  if(bx>0&&bx<N-1)ox=sub(S[bi-1],S[bi],S[bi+1]);
-  if(by>0&&by<N-1)oy=sub(S[bi-N],S[bi],S[bi+N]);
-  const dx=-(bx-SR+ox),dy=-(by-SR+oy);
-  let tx=0,c=0;for(let y=SM;y<H-SM;y+=ST)for(let x=SM;x<W-SM-ST;x+=ST){tx+=Math.abs(g[y*W+x+ST]-g[y*W+x]);c++}
-  if(tx/c<2.5)lowTex++;
-  posX+=dx;posY+=dy;
-  base[0]+=.03*(posX-base[0]);base[1]+=.03*(posY-base[1]);
-  const bx2=Math.max(-70,Math.min(70,(posX-base[0])*3)),by2=Math.max(-50,Math.min(50,(posY-base[1])*3));
-  $("bub").style.transform=`translate(${bx2}px,${by2}px)`;
-  if(phase==="instr"||phase==="walk")rows.push([t,dx*K/dt,posY,Math.hypot(dx,dy)*K/dt,posX*K]);
- }
- prev=g;pt=t;
+function tone(f,d){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();AC.resume();const o=AC.createOscillator(),g=AC.createGain();o.frequency.value=f;g.gain.value=.3;o.connect(g);g.connect(AC.destination);o.start();o.stop(AC.currentTime+d)}catch(e){}}
+function mkWav(f,d){const sr=22050,n=Math.floor(sr*d),b=new DataView(new ArrayBuffer(44+n*2));const w=(o,s)=>{for(let i=0;i<s.length;i++)b.setUint8(o+i,s.charCodeAt(i))};w(0,"RIFF");b.setUint32(4,36+n*2,true);w(8,"WAVEfmt ");b.setUint32(16,16,true);b.setUint16(20,1,true);b.setUint16(22,1,true);b.setUint32(24,sr,true);b.setUint32(28,sr*2,true);b.setUint16(32,2,true);b.setUint16(34,16,true);w(36,"data");b.setUint32(40,n*2,true);for(let i=0;i<n;i++){const e=Math.min(1,i/200,(n-i)/200);b.setInt16(44+i*2,Math.sin(2*Math.PI*f*i/sr)*20000*e,true)}return URL.createObjectURL(new Blob([b],{type:"audio/wav"}))}
+function beep(){try{if(!BP)BP=new Audio(mkWav(880,.5));BP.currentTime=0;BP.play().catch(()=>tone(880,.4))}catch(e){tone(880,.4)}try{navigator.vibrate&&navigator.vibrate(300)}catch(e){}}
+function resetRun(){rows=[];bg=null;bgSum=null;bgN=0;g0=null;gl=null;bgReady=false;snap=null;snapDone=false;nClip=0;nOk=0;cv.dataset.vw="";T0=0;res=null;man={}}
+const ACT=["bg","enter","instr","walk","file"];
+function frame(t){
+ if(!ACT.includes(phase)||!vid.videoWidth)return;
+ const key=vid.videoWidth+"x"+vid.videoHeight;
+ if(cv.dataset.vw!==key){W=Math.max(80,Math.min(320,Math.round(H*vid.videoWidth/vid.videoHeight)));cv.width=W;cv.dataset.vw=key;bgSum=new Float32Array(W*H);bgN=0;g0=null;gl=null;bgReady=false}
+ ctx.drawImage(vid,0,0,W,H);const d=ctx.getImageData(0,0,W,H).data,n=W*H,g=new Uint8Array(n);
+ for(let i=0;i<n;i++)g[i]=(d[i*4]*77+d[i*4+1]*150+d[i*4+2]*29)>>8;
+ if(t<3000){for(let i=0;i<n;i++)bgSum[i]+=g[i];bgN++;if(!g0)g0=g;gl=g;$("det").textContent="빈 배경을 기억하는 중";return}
+ if(!bgReady){
+  if(bgN<5)return;
+  bg=new Float32Array(n);for(let i=0;i<n;i++)bg[i]=bgSum[i]/bgN;
+  let nz=0;for(let i=0;i<n;i++)nz+=Math.abs(g0[i]-gl[i]);nz/=n;thr=Math.max(18,4*nz+10);bgReady=true}
+ const m=new Uint8Array(n);for(let i=0;i<n;i++)m[i]=Math.abs(g[i]-bg[i])>thr?1:0;
+ const keep=new Uint8Array(n),rc=new Int32Array(H),rs=new Float64Array(H),xmn=new Int32Array(H).fill(W),xmx=new Int32Array(H).fill(-1);let area=0,sy=0;
+ for(let y=1;y<H-1;y++)for(let x=1;x<W-1;x++){const i=y*W+x;if(m[i]&&(m[i-1]+m[i+1]+m[i-W]+m[i+W])>=3){keep[i]=1;rc[y]++;rs[y]+=x;if(x<xmn[y])xmn[y]=x;if(x>xmx[y])xmx[y]=x;area++;sy+=y}}
+ let top=-1,bot=-1;for(let y=0;y<H;y++)if(rc[y]>=4){if(top<0)top=y;bot=y}
+ const Hp=bot-top+1;
+ if(top<0||area<n*.006||Hp<H*.25){nClip++;$("det").textContent="측정자 인식 안 됨";return}
+ if(top<=1||bot>=H-2){nClip++;$("det").textContent="전신이 화면에 다 들어와야 해요";return}
+ nOk++;$("det").textContent="측정자 인식됨";
+ let sa=0,sx=0;for(let y=Math.floor(top+.12*Hp);y<=Math.floor(top+.5*Hp);y++){sa+=rc[y];sx+=rs[y]}
+ let sp=0,c=0;for(let y=Math.floor(top+.2*Hp);y<=Math.floor(top+.32*Hp);y++)if(rc[y]){sp+=xmx[y]-xmn[y]+1;c++}
+ if(!sa||!c)return;
+ rows.push([t,Hp,sx/sa,sy/area,sp/c]);
+ if(!snapDone&&t>=tCue-6000){snapDone=true;const im=ctx.createImageData(W,H);
+  for(let i=0;i<n;i++){const a=keep[i];im.data[i*4]=a?d[i*4]*.4+30*.6:d[i*4];im.data[i*4+1]=a?d[i*4+1]*.4+190*.6:d[i*4+1];im.data[i*4+2]=a?d[i*4+2]*.4+160*.6:d[i*4+2];im.data[i*4+3]=255}
+  snap={im,top,bot,w:W}}
 }
+function med(a){const b=a.slice().sort((x,y)=>x-y);return b[b.length>>1]}
+function ema(a,al){let s=a[0];return a.map(v=>(s+=al*(v-s)))}
 function hp(a,al){let m=a[0];return a.map(v=>{m+=al*(v-m);return v-m})}
-function stepTimes(){
- if(rows.length<20)return[];
- const py=hp(rows.map(r=>r[2]),.08);let s=0;const sm=py.map(v=>(s+=.5*(v-s)));
- let q=0;for(const v of sm)q+=v*v;const thr=Math.max(.45,.6*Math.sqrt(q/sm.length));
- const st=[];let last=-1e9;
- for(let i=1;i<sm.length-1;i++)if(sm[i]>thr&&sm[i]>sm[i-1]&&sm[i]>=sm[i+1]&&rows[i][0]-last>330){st.push(rows[i][0]);last=rows[i][0]}
- return st;
+function sd(a){if(a.length<2)return 0;const m=a.reduce((s,v)=>s+v,0)/a.length;return Math.sqrt(a.reduce((s,v)=>s+(v-m)*(v-m),0)/a.length)}
+function analyze(){
+ const cue=tCue,R=rows;
+ const bw=R.filter(r=>r[0]>=cue-9000&&r[0]<=cue-4000);
+ if(bw.length<12)return null;
+ const xm=r=>(r[2]-W/2)/r[1]*1.7;
+ const H0=med(bw.map(r=>r[1])),S0=med(bw.map(r=>r[4]/r[1])),X0=med(bw.map(xm));
+ const sway=sd(bw.map(xm))*100,exc=Math.max(...bw.map(r=>Math.abs(xm(r)-X0)))*100;
+ const c=Array(8).fill(null),d=Array(8).fill("");
+ const m={sway,exc,appr:0,dev:0,lat:0,dur:0,A:0,B:0,q:0};
+ c[0]=sway>2.5||exc>6;d[0]=`머리 좌우 흔들림 ${sway.toFixed(1)}cm, 기본 자세에서 최대 ${exc.toFixed(1)}cm 이동`;
+ const mv=r=>Math.abs(Math.log(r[1]/H0))>.05||Math.abs(xm(r)-X0)>.12;
+ const L=R.filter(r=>r[0]>=cue-4000);let tW=null;
+ for(let i=0;i<L.length-2;i++)if(mv(L[i])&&mv(L[i+1])&&mv(L[i+2])){tW=L[i][0];break}
+ const Wk=tW===null?[]:R.filter(r=>r[0]>=tW-300);
+ if(Wk.length<25){c[1]=false;d[1]="신호 전 움직임 없음";for(const i of [2,4,5,6,7])d[i]="걷는 모습이 충분히 인식되지 않아 판단 불가";return{c,d,m}}
+ c[1]=tW<cue-300;d[1]=c[1]?`신호보다 ${((cue-tW)/1000).toFixed(1)}초 먼저 움직임`:"신호 후 출발";
+ const tt=Wk.map(r=>r[0]),Hs=ema(Wk.map(r=>r[1]),.3),N=Wk.length;
+ let mi=0;for(let i=0;i<N;i++)if(Hs[i]>Hs[mi])mi=i;
+ const appr=Hs[mi]/H0;m.appr=appr;
+ let ia=mi,ib=mi;while(ia>0&&Hs[ia-1]>=.97*Hs[mi])ia--;while(ib<N-1&&Hs[ib+1]>=.97*Hs[mi])ib++;
+ const hasTurn=appr>=1.08&&mi>8&&mi<N-8,Ta=tt[ia],Tb=tt[ib];
+ const inT=(t,p)=>hasTurn&&t>=Ta-p&&t<=Tb+p;
+ const P=[];for(let i=0;i<N;i++)if(!inT(tt[i],300))P.push([1/Wk[i][1],xm(Wk[i])]);
+ let a=0,b=0;if(P.length>10){const mu=P.reduce((s,p)=>s+p[0],0)/P.length,mm=P.reduce((s,p)=>s+p[1],0)/P.length;let sxy=0,sxx=0;for(const p of P){sxy+=(p[0]-mu)*(p[1]-mm);sxx+=(p[0]-mu)*(p[0]-mu)}b=sxx>1e-9?sxy/sxx:0;a=mm-b*mu}
+ const resd=Wk.map(r=>xm(r)-(a+b/r[1])),rsm=ema(resd,.3),hr=hp(resd,.2);
+ let dev=0;const H2=[];for(let i=0;i<N;i++)if(!inT(tt[i],300)){dev=Math.max(dev,Math.abs(rsm[i]));H2.push(hr[i])}
+ const lat=H2.length>10?Math.sqrt(H2.reduce((s,v)=>s+v*v,0)/H2.length):0;m.dev=dev*100;m.lat=lat*100;
+ c[4]=dev>.15||lat>.05;d[4]=`일직선에서 최대 ${(dev*100).toFixed(0)}cm 벗어남, 걷는 중 좌우 흔들림 ${(lat*100).toFixed(1)}cm`;
+ const qs=ema(Wk.map(r=>r[4]/r[1]/S0),.4);let run=0,qmax=0,arms=false;
+ for(let i=0;i<N;i++){if(inT(tt[i],700)){run=0;continue}qmax=Math.max(qmax,qs[i]);if(qs[i]>1.35){run++;if(run>=4)arms=true}else run=0}
+ m.q=qmax;c[5]=arms;d[5]=`어깨 폭이 기본 자세의 최대 ${qmax.toFixed(2)}배`;
+ const bob=ema(hp(Wk.map(r=>r[3]),.15).map((v,i)=>v/Wk[i][1]),.5),bs=[];
+ for(let i=0;i<N;i++)if(!inT(tt[i],300))bs.push(bob[i]);
+ const ths=Math.max(.003,.5*sd(bs)),st=[];let last=-1e9;
+ for(let i=1;i<N-1;i++)if(bob[i]>ths&&bob[i]>bob[i-1]&&bob[i]>=bob[i+1]&&tt[i]-last>330&&!inT(tt[i],0)){st.push(tt[i]);last=tt[i]}
+ const ls=Hs.map(Math.log),v=ls.map((_,i)=>{const j=Math.max(0,i-6),k=Math.min(N-1,i+6);return tt[k]>tt[j]?(ls[k]-ls[j])/((tt[k]-tt[j])/1000):0});
+ let tE=tt[N-1];for(let i=N-1;i>=0;i--)if(Math.abs(v[i])>=.05){tE=tt[i];break}
+ let stops=0,s0=null;const chk=t=>{if(s0!==null&&t-s0>=1500)stops++;s0=null};
+ for(let i=0;i<N;i++){const t=tt[i],ok=t>tW+400&&t<tE-300&&!inT(t,500);if(ok&&Math.abs(v[i])<.035){if(s0===null)s0=t}else chk(t)}
+ chk(tt[N-1]);c[2]=stops>0;d[2]=stops?`멈춤 ${stops}회 감지`:"멈춤 없음";
+ if(hasTurn){
+  let dip=1;for(let i=0;i<N;i++)if(tt[i]>=Ta-1000&&tt[i]<=Tb+1000)dip=Math.min(dip,qs[i]);
+  const dur=(Tb-Ta)/1000;m.dur=dur;let mn=1e9,mx=-1e9;for(let i=0;i<N;i++)if(tt[i]>=Ta-500&&tt[i]<=Tb+500){mn=Math.min(mn,resd[i]);mx=Math.max(mx,resd[i])}
+  const te=mx-mn;
+  if(dip<.8){c[6]=dur>4||te>.3;d[6]=`회전 ${dur.toFixed(1)}초, 제자리에서 ${(te*100).toFixed(0)}cm 벗어남`}else d[6]="돌아서는 모습이 확인되지 않아 판단 불가";
+  const A=st.filter(t=>t<Ta).length,B=st.filter(t=>t>Tb).length;m.A=A;m.B=B;
+  c[7]=Math.abs(A-9)>=2||Math.abs(B-9)>=2;d[7]=`갈 때 ${A}걸음, 올 때 ${B}걸음 (오차 ±1 허용)`;
+ }else{d[6]=d[7]="카메라 쪽으로 다가와 돌아서는 동작이 확인되지 않아 판단 불가"}
+ return{c,d,m};
 }
-function clear(){timers.forEach(t=>{clearInterval(t);clearTimeout(t)});timers=[];try{stream&&stream.getTracks().forEach(t=>t.stop())}catch(e){}stream=null;try{speechSynthesis.cancel()}catch(e){}}
-async function begin(){
- $("err").textContent="";
- try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment",width:{ideal:640},height:{ideal:480}},audio:false})}
- catch(e){$("err").textContent="카메라 권한이 필요합니다. 카카오톡 같은 앱 안의 브라우저라면 Safari나 Chrome에서 열고, 브라우저 설정에서 카메라를 허용해 주세요.";return}
- vid.srcObject=stream;try{await vid.play()}catch(e){}
- rows=[];prev=null;posX=posY=0;base=[0,0];lowTex=0;nFr=0;phase="ready";res=null;man={};
- show("run");$("phase").textContent="준비";$("sub").textContent="카메라가 정면을 보게 고정하고 발을 일직선으로 붙여 서세요";
- let n=5;$("count").textContent=n;
- timers.push(setInterval(frame,60));
- const iv=setInterval(()=>{
-  n--;$("count").textContent=Math.max(n,0);
-  if(phase==="ready"&&n===0){
-   if(nFr<5){abort("카메라 영상이 들어오지 않습니다. 다른 앱이 카메라를 쓰고 있지 않은지 확인해 주세요.");return}
-   phase="instr";tStart=performance.now();n=15;$("count").textContent=n;$("phase").textContent="안내 듣는 중";$("sub").textContent="자세를 유지하세요. 신호 전에는 움직이지 마세요";
-   say("발뒤꿈치와 발끝을 붙이고 서서 팔은 몸 옆에 두세요. 제가 시작하라고 할 때까지 그 자세를 유지하세요.");
-  }else if(phase==="instr"&&n===0){
-   phase="walk";tCue=performance.now();beep();say("시작");
-   $("phase").textContent="걷기";$("count").textContent="";$("sub").textContent="9걸음 걷고, 돌아서, 9걸음 돌아오세요";
-   timers.push(setInterval(autoEnd,500),setTimeout(finish,75000));
-  }
- },1000);
- timers.push(iv);
+function clear(){$("pose2").hidden=true;timers.forEach(t=>{clearInterval(t);clearTimeout(t)});timers=[];try{stream&&stream.getTracks().forEach(t=>t.stop())}catch(e){}stream=null;try{speechSynthesis.cancel()}catch(e){}}
+function abort(msg){clear();phase="idle";show("start");$("err").textContent=msg}
+function finish(){
+ if(phase!=="walk"&&phase!=="file")return;
+ const warn=nOk+nClip>0&&nClip/(nOk+nClip)>.1,sn=snap;
+ clear();phase="done";vid.onended=null;
+ const r=analyze();
+ if(!r){abort("측정자를 인식하지 못했습니다. 처음 3초에 측정자가 화면 밖에 있었는지, 옷 색이 배경과 다른지, 전신이 화면에 들어오는지 확인해 주세요.");return}
+ res=r;res.warn=warn;res.snap=sn;render();show("res");
+}
+function tick(){
+ const now=performance.now();
+ if(phase==="ready"){const r=5000-(now-TR);$("count").textContent=Math.max(0,Math.ceil(r/1000));if(r<=0){T0=now;phase="bg";$("phase").textContent="배경 촬영";$("sub").textContent="측정자는 화면 밖에서 기다려 주세요"}return}
+ const e=now-T0;
+ if(phase==="bg"){$("count").textContent=Math.max(0,Math.ceil((3000-e)/1000));if(e>=3000){phase="enter";$("phase").textContent="입장";$("sub").textContent="측정자는 일직선 시작점에 서세요";say("측정자는 화면 안으로 들어와 일직선 시작점에 서세요.")}}
+ else if(phase==="enter"){$("count").textContent=Math.max(0,Math.ceil((20000-e)/1000));if(e>=5000){phase="instr";$("phase").textContent="기본 자세 유지";$("sub").textContent="자세를 유지하세요. 신호 전에는 움직이지 마세요";$("pose2").hidden=false;say("발뒤꿈치와 발끝을 붙이고 서서 팔은 몸 옆에 두세요. 제가 시작하라고 할 때까지 그 자세를 유지하세요.")}}
+ else if(phase==="instr"){$("count").textContent=Math.max(0,Math.ceil((20000-e)/1000));if(e>=20000){phase="walk";beep();setTimeout(()=>say("시작"),600);$("pose2").hidden=true;$("phase").textContent="걷기";$("count").textContent="";$("sub").textContent="9걸음 걸어오고, 돌아서서, 9걸음 되돌아가세요";timers.push(setInterval(autoEnd,700),setTimeout(finish,90000))}}
 }
 function autoEnd(){
- const st=stepTimes(),now=performance.now(),w=st.filter(t=>t>tCue-3000);
- if(w.length>=12&&now-w[w.length-1]>3000)finish();
+ if(performance.now()-T0<32000)return;
+ const Rw=rows.filter(r=>r[0]>=tCue);if(Rw.length<30)return;
+ const Hs=ema(Rw.map(r=>r[1]),.3);let mi=0;for(let i=0;i<Hs.length;i++)if(Hs[i]>Hs[mi])mi=i;
+ const last=Hs.length-1,seg=Hs.slice(-Math.min(45,Hs.length));
+ if(mi<last-30&&Hs[last]<.93*Hs[mi]&&Math.log(Math.max(...seg)/Math.min(...seg))<.05)finish();
 }
-function abort(m){clear();phase="idle";show("start");$("err").textContent=m}
-function finish(){
- if(phase!=="walk")return;
- const warn=nFr>0&&lowTex/nFr>.5;
- clear();phase="done";
- if(rows.length<100){abort("측정 데이터가 부족합니다. 다시 시도해 주세요.");return}
- res=analyze();res.warn=warn;render();show("res");
+async function begin(){
+ $("err").textContent="";
+ try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();AC.resume()}catch(e){}
+ try{stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment",width:{ideal:640},height:{ideal:480}},audio:false})}
+ catch(e){$("err").textContent="카메라를 켤 수 없습니다 ("+(e&&e.name||"오류")+"). 이 환경에서 카메라가 막혀 있을 수 있어요. 아래의 영상으로 분석 방법을 사용해 주세요.";return}
+ vid.onended=null;vid.removeAttribute("src");vid.srcObject=stream;try{await vid.play()}catch(e){}
+ resetRun();tCue=20000;phase="ready";TR=performance.now();
+ show("run");$("det").textContent="";$("phase").textContent="준비";$("sub").textContent="폰을 고정하고 측정자는 화면 밖으로 나가 주세요";
+ say("측정자는 화면 밖으로 나가 주세요. 곧 빈 배경을 촬영합니다.");
+ timers.push(setInterval(tick,100),setInterval(()=>{if(T0)frame(performance.now()-T0)},66));
 }
-function analyze(){
- const R0=rows,st=stepTimes(),t0=tStart,tc=tCue;
- const inst=R0.filter(r=>r[0]>t0+2000&&r[0]<tc),k=inst.length||1;
- const bias=inst.reduce((s,r)=>s+r[1],0)/k;
- const rms=Math.sqrt(inst.reduce((s,r)=>s+r[3]*r[3],0)/k);
- const mx=inst.reduce((s,r)=>s+r[4],0)/k,my=inst.reduce((s,r)=>s+r[2],0)/k;
- let exc=0;for(const r of inst)exc=Math.max(exc,Math.hypot(r[4]-mx,(r[2]-my)*K));
- const c=Array(8).fill(null),d=Array(8).fill("");
- c[0]=rms>8||exc>4;d[0]=`화면 흔들림 ${rms.toFixed(1)}°/s, 최대 이동 ${exc.toFixed(1)}°`;
- const early=st.filter(t=>t>t0+2500&&t<tc-300);
- c[1]=early.length>=2;d[1]=c[1]?`신호 전 ${early.length}걸음 감지`:"신호 후 출발";
- const ws=c[1]?st.filter(t=>t>t0+2500):st.filter(t=>t>=tc);
- const W2=R0.filter(r=>r[0]>=(ws[0]||tc)-300);
- let ys=0;const Y=W2.map(r=>{ys+=.3*((r[1]-bias)-ys);return[r[0],ys]});
- const seg=[];let cur=null;
- for(let i=1;i<Y.length;i++){const dt=(Y[i][0]-Y[i-1][0])/1000;
-  if(Math.abs(Y[i][1])>30){if(!cur)cur={a:Y[i][0],b:0,ang:0,la:0};cur.b=Y[i][0];cur.la=Y[i][0];cur.ang+=Y[i][1]*dt}
-  else if(cur&&Y[i][0]-cur.la>500){seg.push(cur);cur=null}}
- if(cur)seg.push(cur);
- const ev=[];for(const s of seg.filter(s=>Math.abs(s.ang)>15)){const l=ev[ev.length-1];if(l&&s.a-l.b<1500){l.b=s.b;l.ang+=s.ang;l.n++}else ev.push({a:s.a,b:s.b,ang:s.ang,n:1})}
- ev.sort((x,y)=>Math.abs(y.ang)-Math.abs(x.ang));
- const T=ev[0]&&Math.abs(ev[0].ang)>=100?ev[0]:null;
- const A=T?ws.filter(t=>t<T.a):ws,B=T?ws.filter(t=>t>T.b):[];
- if(ws.length>=3){
-  let stop=0;for(let i=1;i<ws.length;i++){const g=ws[i]-ws[i-1];if(g>1600&&!(T&&ws[i]>T.a-800&&ws[i-1]<T.b+800))stop++}
-  c[2]=stop>0;d[2]=stop?`멈춤 ${stop}회 감지`:"멈춤 없음";
- }else d[2]="걸음이 충분히 감지되지 않음";
- const dev=(a,b)=>{let h=0,h0=null,mxx=0;for(let i=1;i<Y.length;i++){if(Y[i][0]<a||Y[i][0]>b)continue;h+=Y[i][1]*(Y[i][0]-Y[i-1][0])/1000;if(h0===null)h0=h;mxx=Math.max(mxx,Math.abs(h-h0))}return mxx};
- const dA=A.length>2?dev(A[0],T?T.a:A[A.length-1]):0,dB=B.length>2?dev(T.b,B[B.length-1]):0,dm=Math.max(dA,dB);
- const hx=hp(R0.map(r=>r[4]),.08),L=[];
- R0.forEach((r,i)=>{if(ws.length>=4&&r[0]>=ws[0]&&r[0]<=ws[ws.length-1]&&!(T&&r[0]>T.a-300&&r[0]<T.b+300))L.push(hx[i])});
- const lat=L.length>20?Math.sqrt(L.reduce((s,v)=>s+v*v,0)/L.length):0;
- if(ws.length>=4){c[4]=dm>15||lat>2.5;d[4]=`방향 이탈 약 ${dm.toFixed(0)}°, 좌우 흔들림 ${lat.toFixed(1)}°`}else d[4]="걸음이 충분히 감지되지 않음";
- if(T){c[6]=T.n>=4||(T.b-T.a)>4000||Math.abs(Math.abs(T.ang)-180)>45;d[6]=`회전 ${Math.abs(T.ang).toFixed(0)}°, ${((T.b-T.a)/1000).toFixed(1)}초, ${T.n}회 나눠 돎`;
-  c[7]=Math.abs(A.length-9)>=2||Math.abs(B.length-9)>=2;d[7]=`갈 때 ${A.length}걸음, 올 때 ${B.length}걸음 (오차 ±1 허용)`}
- else{d[6]=d[7]="회전이 감지되지 않아 판단 불가"}
- return{c,d,m:{rms,exc,lat,A:A.length,B:B.length,dm,turn:T?`${Math.abs(T.ang).toFixed(0)}°`:"-"}};
+async function fromFile(f){
+ $("err").textContent="";
+ resetRun();tCue=(parseFloat($("cue").value)||20)*1000;phase="file";
+ vid.srcObject=null;vid.src=URL.createObjectURL(f);vid.muted=true;
+ show("run");$("det").textContent="";$("phase").textContent="영상 분석 중";$("count").textContent="";$("sub").textContent="영상을 재생하며 분석합니다. 끝날 때까지 기다려 주세요";
+ try{await vid.play()}catch(e){abort("영상을 재생할 수 없습니다. 다른 영상으로 시도해 주세요.");return}
+ let last=-1;
+ const cb=(n,mt)=>{if(vid.ended||phase!=="file")return;if(mt.mediaTime-last>=.066){last=mt.mediaTime;frame(mt.mediaTime*1000)}vid.requestVideoFrameCallback(cb)};
+ if(vid.requestVideoFrameCallback)vid.requestVideoFrameCallback(cb);
+ else timers.push(setInterval(()=>{if(!vid.paused&&!vid.ended)frame(vid.currentTime*1000)},66));
+ vid.onended=()=>finish();
 }
 function render(){
  const hits=res.c.filter(Boolean).length+MAN.filter(i=>man[i]===true).length;
  const pend=MAN.filter(i=>man[i]==null).length;
  const lv=hits<=1?"균형이 안정적입니다":hits<=3?"균형이 다소 흔들립니다":"균형이 많이 무너졌습니다";
- $("score").innerHTML=`<b>${hits}</b> / 8 항목 해당<div style="font-weight:700;margin-top:6px">${lv}</div>${pend?`<div class="mut">직접 확인 항목 ${pend}개는 아직 반영되지 않았어요</div>`:""}${res.warn?`<div class="mut">화면에 무늬가 부족해 정확도가 낮을 수 있어요</div>`:""}${res.sample?`<div class="mut">샘플 데이터입니다</div>`:""}`;
- $("list").innerHTML=CL.map((x,i)=>{
+ $("score").innerHTML=`<b>${hits}</b> / 8 항목 해당<div style="font-weight:700;margin-top:6px">${lv}</div>${pend?`<div class="mut">직접 확인 항목 ${pend}개는 아직 반영되지 않았어요</div>`:""}${res.warn?`<div class="mut">전신이 화면에서 잘리거나 인식이 끊긴 구간이 많아 정확도가 낮을 수 있어요</div>`:""}${res.sample?`<div class="mut">샘플 데이터입니다</div>`:""}`;
+ const bw=$("basewrap");
+ if(res.snap){bw.hidden=false;const cn=$("basecv");cn.width=res.snap.w;cn.height=H;const x=cn.getContext("2d");x.putImageData(res.snap.im,0,0);x.strokeStyle="#FFB020";x.lineWidth=1;x.strokeRect(1,res.snap.top,res.snap.w-2,res.snap.bot-res.snap.top)}else bw.hidden=true;
+ $("list").innerHTML=CL.map((t,i)=>{
   const isM=MAN.includes(i),v=isM?man[i]:res.c[i];
   const cls=v===true?"hit":"",chip=isM?(v==null?'<span class="chip">직접 확인</span>':v?'<span class="chip hit">해당</span>':'<span class="chip ok">해당 없음</span>'):(v==null?'<span class="chip">판단 불가</span>':v?'<span class="chip hit">해당</span>':'<span class="chip ok">해당 없음</span>');
   const tog=isM?`<div class="tog"><button class="ghost ${v===true?"sel":""}" data-m="${i}" data-v="1">해당</button><button class="ghost ${v===false?"sel":""}" data-m="${i}" data-v="0">해당 없음</button></div>`:"";
-  return`<div class="clue ${cls}"><div><div class="t">${x[0]}</div>${x[1]?`<div class="s">${x[1]}</div>`:""}<div class="s">${isM?"가슴 카메라로는 보이지 않아요. 옆 사람의 관찰이나 별도 영상으로 표시하세요.":res.d[i]}</div>${tog}</div>${chip}</div>`}).join("");
+  return`<div class="clue ${cls}"><div><div class="t">${t[0]}</div>${t[1]?`<div class="s">${t[1]}</div>`:""}<div class="s">${isM?"영상으로는 알 수 없어요. 관찰자가 직접 보고 표시하세요.":res.d[i]}</div>${tog}</div>${chip}</div>`}).join("");
  const m=res.m;
- $("met").innerHTML=[["안내 중 화면 흔들림",m.rms.toFixed(1)+"°/s"],["안내 중 최대 이동",m.exc.toFixed(1)+"°"],["걸음 수(갈 때/올 때)",m.A+" / "+m.B],["회전 각도",m.turn],["진행 방향 이탈",m.dm.toFixed(0)+"°"],["걷는 중 좌우 흔들림",m.lat.toFixed(1)+"°"]].map(x=>`<div><span>${x[0]}</span>${x[1]}</div>`).join("");
+ $("met").innerHTML=[["기본 자세 좌우 흔들림",m.sway.toFixed(1)+"cm"],["기본 자세에서 최대 이동",m.exc.toFixed(1)+"cm"],["걸음 수(갈 때/올 때)",m.A+" / "+m.B],["회전 시간",m.dur.toFixed(1)+"초"],["일직선에서 최대 이탈",m.dev.toFixed(0)+"cm"],["걷는 중 좌우 흔들림",m.lat.toFixed(1)+"cm"],["어깨 폭 최대 배율",m.q.toFixed(2)+"배"],["카메라 접근 배율",m.appr.toFixed(2)+"배"]].map(x=>`<div><span>${x[0]}</span>${x[1]}</div>`).join("");
 }
 $("list").addEventListener("click",e=>{const b=e.target.closest("[data-m]");if(!b)return;man[b.dataset.m]=b.dataset.v==="1";render()});
-$("go").onclick=begin;$("end").onclick=()=>{if(phase==="walk")finish();else abort("")};
+$("rec").onclick=()=>$("f1").click();$("pick").onclick=()=>$("f2").click();
+$("f1").onchange=$("f2").onchange=e=>{const f=e.target.files[0];e.target.value="";if(f)fromFile(f)};
+$("guide").onclick=()=>{const b=$("guide");if(b.dataset.on)return;b.dataset.on=1;beep();say("측정자는 화면 밖에서 기다려 주세요.");let n=20;b.textContent="신호음까지 20초";
+ const iv=setInterval(()=>{n--;b.textContent=n>0?`신호음까지 ${n}초`:"시작!";
+  if(n===17)say("측정자는 화면 안으로 들어와 일직선 시작점에 서세요.");
+  if(n===15)say("발뒤꿈치와 발끝을 붙이고 서서 팔은 몸 옆에 두세요. 제가 시작하라고 할 때까지 그 자세를 유지하세요.");
+  if(n===0){clearInterval(iv);beep();setTimeout(()=>say("시작"),700);setTimeout(()=>{b.textContent="안내 소리 재생 (20초)";delete b.dataset.on},2500)}},1000)};
+$("go").onclick=begin;$("end").onclick=()=>{if(phase==="walk"||phase==="file")finish();else abort("")};
 $("again").onclick=()=>show("start");
-$("demo").onclick=()=>{man={};res={sample:true,c:[true,false,true,null,true,null,true,false],d:["화면 흔들림 11.2°/s, 최대 이동 5.1°","신호 후 출발","멈춤 1회 감지","","방향 이탈 약 24°, 좌우 흔들림 3.4°","","회전 210°, 4.6초, 5회 나눠 돎","갈 때 9걸음, 올 때 10걸음 (오차 ±1 허용)"],m:{rms:11.2,exc:5.1,lat:3.4,A:9,B:10,dm:24,turn:"210°"}};render();show("res")};
+$("demo").onclick=()=>{man={};res={sample:true,c:[true,false,true,null,true,true,true,false],d:["머리 좌우 흔들림 3.1cm, 기본 자세에서 최대 7.4cm 이동","신호 후 출발","멈춤 1회 감지","","일직선에서 최대 19cm 벗어남, 걷는 중 좌우 흔들림 5.8cm","어깨 폭이 기본 자세의 최대 1.52배","회전 5.2초, 제자리에서 41cm 벗어남","갈 때 9걸음, 올 때 10걸음 (오차 ±1 허용)"],m:{sway:3.1,exc:7.4,appr:1.7,dev:19,lat:5.8,dur:5.2,A:9,B:10,q:1.52}};render();show("res")};
 if("serviceWorker" in navigator&&location.protocol!=="file:")navigator.serviceWorker.register("sw.js").catch(()=>{});
 </script></body></html>
